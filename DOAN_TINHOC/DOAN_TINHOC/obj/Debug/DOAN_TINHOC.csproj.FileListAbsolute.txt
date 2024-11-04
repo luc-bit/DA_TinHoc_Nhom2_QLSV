@@ -1,0 +1,13 @@
+C:\Users\vutan\source\repos\DOAN_TINHOC\DOAN_TINHOC\bin\Debug\DOAN_TINHOC.exe.config
+C:\Users\vutan\source\repos\DOAN_TINHOC\DOAN_TINHOC\bin\Debug\DOAN_TINHOC.exe
+C:\Users\vutan\source\repos\DOAN_TINHOC\DOAN_TINHOC\bin\Debug\DOAN_TINHOC.pdb
+C:\Users\vutan\source\repos\DOAN_TINHOC\DOAN_TINHOC\bin\Debug\Newtonsoft.Json.dll
+C:\Users\vutan\source\repos\DOAN_TINHOC\DOAN_TINHOC\bin\Debug\Newtonsoft.Json.xml
+C:\Users\vutan\source\repos\DOAN_TINHOC\DOAN_TINHOC\obj\Debug\DOAN_TINHOC.csproj.AssemblyReference.cache
+C:\Users\vutan\source\repos\DOAN_TINHOC\DOAN_TINHOC\obj\Debug\DA_tinhoc.FormQLSV.resources
+C:\Users\vutan\source\repos\DOAN_TINHOC\DOAN_TINHOC\obj\Debug\DOAN_TINHOC.Properties.Resources.resources
+C:\Users\vutan\source\repos\DOAN_TINHOC\DOAN_TINHOC\obj\Debug\DOAN_TINHOC.csproj.GenerateResource.cache
+C:\Users\vutan\source\repos\DOAN_TINHOC\DOAN_TINHOC\obj\Debug\DOAN_TINHOC.csproj.CoreCompileInputs.cache
+C:\Users\vutan\source\repos\DOAN_TINHOC\DOAN_TINHOC\obj\Debug\DOAN_TIN.274A0EBB.Up2Date
+C:\Users\vutan\source\repos\DOAN_TINHOC\DOAN_TINHOC\obj\Debug\DOAN_TINHOC.exe
+C:\Users\vutan\source\repos\DOAN_TINHOC\DOAN_TINHOC\obj\Debug\DOAN_TINHOC.pdb
