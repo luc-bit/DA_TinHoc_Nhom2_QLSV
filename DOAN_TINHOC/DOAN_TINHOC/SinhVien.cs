@@ -7,25 +7,30 @@ using System.IO;
 using Newtonsoft.Json; 
 
 
-namespace DA_tinhoc
+namespace DOAN_TINHOC
 {
     [Serializable]
-    internal class SinhVien
+    public class SinhVien
     {
         //khai bao
-        private string maSV;
+        private int maSV;
         private string tenSV;
         private string lop;
         private string khoa;
+        private string khoas;
         private string diachi;
         private string sodt;
-        private DateTime ngaysinh;
+        private DateTime ngaysinh;//kiem tra 
         private string gioitinh;
         //propreties
-        public string MaSV
+        public int MaSV
         {
             get { return maSV; }
             set { maSV = value; }
+        }
+        public string HienThiMaSinhVien
+        {
+            get { return "DH" + maSV.ToString(); }
         }
         public string TenSV
         {
@@ -41,6 +46,11 @@ namespace DA_tinhoc
         {
             get { return khoa; }
             set { khoa = value; }
+        }
+        public string Khoas
+        {
+            get { return khoas; }
+            set { khoas = value; }
         }
         public string Diachi
         {
@@ -66,21 +76,23 @@ namespace DA_tinhoc
 
         public SinhVien()
         {
-            maSV = "";
+            maSV = 0;
             tenSV = "";
             lop = "";
             khoa = "";
+            khoas = "";
             diachi = "";
             sodt = "";
             ngaysinh = DateTime.Now;
             gioitinh = "";
         }
-        public SinhVien(string ma, string ten, string lopp, string khoaa, string dc, string dt, DateTime NS, string GT)
+        public SinhVien(int ma, string ten, string lopp, string khoaa,string khoaS, string dc, string dt, DateTime NS, string GT)
         {
             maSV = ma;
             tenSV = ten;
             lop = lopp;
             khoa = khoaa;
+            khoas= khoaS;
             diachi = dc;
             sodt = dt;
             ngaysinh = NS;

@@ -9,10 +9,10 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Windows.Forms;
 
-namespace DA_tinhoc
+namespace DOAN_TINHOC
 {
     [Serializable]
-    internal class DanhMucSinhVien
+    public class DanhMucSinhVien
     {
         private List<SinhVien> m_dsSinhVien;
 
@@ -28,9 +28,9 @@ namespace DA_tinhoc
         }
         public DanhMucSinhVien(List<SinhVien> dssinhvien)
         {
-            m_dsSinhVien = dssinhvien; ;
+            m_dsSinhVien = dssinhvien; 
         }
-        public bool KienTraMa(string ma)
+        public bool KienTraMa(int ma)
         {
             foreach (SinhVien sv in m_dsSinhVien)
             {
@@ -76,6 +76,55 @@ namespace DA_tinhoc
                 return false;
             }
         }
-        
+        public SinhVien TimTheoMa(int ma)
+        {
+            foreach (SinhVien sv in m_dsSinhVien)
+            {
+                if (sv.MaSV.Equals(ma))
+                {
+                    return sv;
+                }
+            }
+            return null;
+        }
+        public List<string> CapNhatDanhSachLop(string khoas, string khoa)
+        {
+            List<string> danhSachLop = new List<string>();
+
+            if (string.IsNullOrEmpty(khoas) || string.IsNullOrEmpty(khoa))
+            {
+                return danhSachLop; // Trả về danh sách rỗng nếu khóa hoặc khoa chưa được chọn
+            }
+            
+            if (khoas == "D22" && khoa == "CNTT")
+            {
+                for (int i = 1; i <= 15; i++)
+                {
+                    danhSachLop.Add($"D22_TH{(i < 10 ? "0" + i : i.ToString())}");
+                }
+            }
+            else if (khoas == "D21" && khoa == "CNTT")
+            {
+                for (int i = 1; i <= 15; i++)
+                {
+                    danhSachLop.Add($"D21_TH{(i < 10 ? "0" + i : i.ToString())}");
+                }
+            }
+            else if (khoas == "D22" && khoa == "QTKD")
+            {
+                for (int i = 1; i <= 15; i++)
+                {
+                    danhSachLop.Add($"D22_QT{(i < 10 ? "0" + i : i.ToString())}");
+                }
+            }
+            else if(khoas == "D21" && khoa == "QTKD")
+            {
+                for (int i = 1; i <= 15; i++)
+                {
+                    danhSachLop.Add($"D21_QT{(i < 10 ? "0" + i : i.ToString())}");
+                } 
+            }
+            return danhSachLop;
+        }
     }
 }

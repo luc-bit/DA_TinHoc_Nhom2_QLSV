@@ -14,7 +14,7 @@ using System.IO;
 
 
 
-namespace DA_tinhoc
+namespace DOAN_TINHOC
 {
     public partial class FormQLSV : Form
     {
@@ -23,20 +23,64 @@ namespace DA_tinhoc
         public FormQLSV()
         {
             InitializeComponent();
+            cbxLop.Enabled = false;
         }
         private void HienThiDanhSachSinhVien(DataGridView dgv, List<SinhVien> ds)
         {
+            
+            dgv.Columns.Clear();
+            // Đặt AutoGenerateColumns = false để chỉ tạo các cột thủ công
+            dgv.AutoGenerateColumns = false;
+            // Tạo cột hiển thị "HienThiMaSinhVien"
+            DataGridViewTextBoxColumn maSVDHColumn = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "HienThiMaSinhVien",
+                HeaderText = "Mã SV"
+            };
+            dgv.Columns.Add(maSVDHColumn);
+
+            // Thêm các cột khác với DataPropertyName để hiển thị đúng thuộc tính của lớp SinhVien
+            dgv.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "TenSV", HeaderText = "Tên SV" });
+            dgv.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Lop", HeaderText = "Lớp" });
+            dgv.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Khoa", HeaderText = "Khoa" });
+            dgv.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Khoas", HeaderText = "Khóa" });
+            dgv.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Diachi", HeaderText = "Địa chỉ" });
+            dgv.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "SoDT", HeaderText = "Số ĐT" });
+            dgv.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Gioitinh", HeaderText = "Giới tính" });
+            dgv.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "NgaySinh", HeaderText = "Ngày sinh" });
+
+            // Gán dữ liệu vào DataGridView
             dgv.DataSource = ds.ToList();
+            
         }
         private void btnThem_Click(object sender, EventArgs e)
         {
-            string ma = txtMaSV.Text;
+            int ma;
+            if (!int.TryParse(txtMaSV.Text, out ma))
+            {
+                MessageBox.Show("Mã Nhập Vào Không Phải Là Số Nguyên", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtMaSV.Clear();
+                return;
+            }
+           
+            int index=cbxLop.SelectedIndex;
             string ten = txtTenSV.Text;
-            string lop = txtLop.Text;
-            string khoa = txtKhoa.Text;
+            string lop = cbxLop.SelectedItem?.ToString();
+            string khoa = cbxKhoa.SelectedItem?.ToString();
+            string khoas=cbxKhoas.SelectedItem?.ToString();
+            if (string.IsNullOrEmpty(lop) || string.IsNullOrEmpty(khoa)||string.IsNullOrEmpty(khoas))
+            {
+                MessageBox.Show("Vui Lòng Chọn Khoa Và Lớp và Khóa", "Lỗi", MessageBoxButtons.OK,MessageBoxIcon.Error);
+                return;
+            } 
             string dc = txtDiaChi.Text;
             string dt = txtSoDT.Text;
             DateTime ns = dptNgaySinh.Value;
+            if ((DateTime.Now.Year - ns.Year) < 18)
+            {
+                MessageBox.Show("Ngày Sinh Nhập vào dưới 18 tuổi", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Question);
+                return;
+            }
             string gioitinh;
             if (rdbNam.Checked)
             {
@@ -46,7 +90,7 @@ namespace DA_tinhoc
             {
                 gioitinh = "Nữ";
             }
-            SinhVien sinhvien = new SinhVien(ma, ten, lop, khoa, dc, dt, ns, gioitinh);
+            SinhVien sinhvien = new SinhVien(ma,ten, lop,khoa, khoas, dc, dt, ns, gioitinh);
             if (DMSinhVien.Them(sinhvien))
             {
                 HienThiDanhSachSinhVien(dgvQLSV, DMSinhVien.DsSinhVien);
@@ -62,87 +106,88 @@ namespace DA_tinhoc
         {
             vitri = e.RowIndex;
             //
-            SinhVien sv = new SinhVien();
-            sv = DMSinhVien.DsSinhVien[vitri];
-            txtMaSV.Text = sv.MaSV;
-            txtTenSV.Text = sv.TenSV;
-            txtLop.Text = sv.Lop;
-            txtKhoa.Text = sv.Khoa;
-            txtDiaChi.Text = sv.Diachi;
-            txtSoDT.Text = sv.SoDT;
-            dptNgaySinh.Value = sv.NgaySinh;
-            if (sv.Gioitinh == "Nam")
+            if (DMSinhVien.DsSinhVien.Count>0)
             {
-                rdbNam.Checked = true;
-            }
-            else
-            {
-                rdbNu.Checked = true;
+                SinhVien sv = new SinhVien();
+                sv = DMSinhVien.DsSinhVien[vitri];
+                txtMaSV.Text = sv.MaSV.ToString();
+                txtTenSV.Text = sv.TenSV;
+                cbxKhoas.SelectedItem = sv.Khoas;
+                cbxKhoa.SelectedItem = sv.Khoa;
+                cbxLop.SelectedItem = sv.Lop;
+                txtDiaChi.Text = sv.Diachi;
+                txtSoDT.Text = sv.SoDT;
+                dptNgaySinh.Value = sv.NgaySinh;
+                if (sv.Gioitinh == "Nam")
+                {
+                    rdbNam.Checked = true;
+                }
+                else
+                {
+                    rdbNu.Checked = true;
+                }
             }
         }
 
         private void btnXoa_Click(object sender, EventArgs e)
         {
-
-            SinhVien sv = DMSinhVien.DsSinhVien[vitri];
-            if (DMSinhVien.Xoa(sv, vitri))
+            if (DMSinhVien.DsSinhVien.Count > 0)
             {
-                HienThiDanhSachSinhVien(dgvQLSV, DMSinhVien.DsSinhVien);
-                MessageBox.Show("Đã xóa sinh viên", "Thông báo", MessageBoxButtons.OK);
+                SinhVien sv = DMSinhVien.DsSinhVien[vitri];
+                if (DMSinhVien.Xoa(sv, vitri))
+                {
+                    HienThiDanhSachSinhVien(dgvQLSV, DMSinhVien.DsSinhVien);
+                    MessageBox.Show("Đã xóa sinh viên", "Thông báo", MessageBoxButtons.OK);
+                }
             }
-           
         }
 
         private void btnSua_Click(object sender, EventArgs e)
         {
-            SinhVien sv = DMSinhVien.DsSinhVien[vitri];
-
-            if (DMSinhVien.Sua(sv, vitri))
+            if (DMSinhVien.DsSinhVien.Count > 0)
             {
-                sv.MaSV = txtMaSV.Text;
-                sv.TenSV = txtTenSV.Text;
-                sv.Lop = txtLop.Text;
-                sv.Khoa = txtKhoa.Text;
-                sv.Diachi = txtDiaChi.Text;
-                sv.SoDT = txtSoDT.Text;
-
-                if (rdbNam.Checked)
+                SinhVien sv = DMSinhVien.DsSinhVien[vitri];
+                if (DMSinhVien.Sua(sv, vitri))
                 {
-                    sv.Gioitinh = "Nam";
+                    sv.TenSV = txtTenSV.Text;
+                    sv.Lop = cbxLop.SelectedItem?.ToString();
+                    sv.Khoa = cbxKhoa.SelectedItem?.ToString();
+                    sv.Khoas= cbxKhoas.SelectedItem?.ToString();
+                    if (string.IsNullOrEmpty(sv.Lop) || string.IsNullOrEmpty(sv.Khoa)||string.IsNullOrEmpty(sv.Khoas))
+                    {
+                        MessageBox.Show("Vui Lòng Chọn Khoa Và Lớp và Khóa ", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    sv.Diachi = txtDiaChi.Text;
+                    sv.SoDT = txtSoDT.Text;
+                    sv.NgaySinh = dptNgaySinh.Value;
+                    if ((DateTime.Now.Year - sv.NgaySinh.Year) < 18)
+                    {
+                        MessageBox.Show("Ngày Sinh Sửa  dưới 18 tuổi", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Question);
+                        return;
+                    }
+                    if (rdbNam.Checked)
+                    {
+                        sv.Gioitinh = "Nam";
+                    }
+                    else
+                    {
+                        sv.Gioitinh = "Nữ";
+                    }
+                    HienThiDanhSachSinhVien(dgvQLSV, DMSinhVien.DsSinhVien);
+                    MessageBox.Show("Đã sửa sinh viên", "Thông báo", MessageBoxButtons.OK);
                 }
-                else
-                {
-                    sv.Gioitinh = "Nữ";
-                }
-                HienThiDanhSachSinhVien(dgvQLSV, DMSinhVien.DsSinhVien);
-                MessageBox.Show("Đã sửa sinh viên", "Thông báo", MessageBoxButtons.OK);
             }
-            
         }
 
         private void LuuFileJson(string filePath)
         {
             try
             {
-                // Khởi tạo danh sách sinh viên hiện có
-                List<SinhVien> danhSachHienTai = new List<SinhVien>();
+                // Chuyển đổi danh sách hiện tại thành JSON
+                string json = JsonConvert.SerializeObject(DMSinhVien.DsSinhVien, Formatting.Indented);
 
-                // Kiểm tra nếu file đã tồn tại
-                if (File.Exists(filePath))
-                {
-                    // Đọc nội dung hiện có của file JSON
-                    string existingJson = File.ReadAllText(filePath);
-                    // Chuyển đổi JSON hiện có thành danh sách sinh viên
-                    danhSachHienTai = JsonConvert.DeserializeObject<List<SinhVien>>(existingJson) ?? new List<SinhVien>();
-                }
-
-                // Thêm các sinh viên mới vào danh sách hiện tại
-                danhSachHienTai.AddRange(DMSinhVien.DsSinhVien);
-
-                // Chuyển đổi danh sách tổng hợp thành JSON
-                string json = JsonConvert.SerializeObject(danhSachHienTai, Formatting.Indented);
-
-                // Ghi lại toàn bộ nội dung vào file
+                // Ghi dữ liệu vào file JSON
                 File.WriteAllText(filePath, json);
 
                 MessageBox.Show("Đã lưu danh sách sinh viên vào file JSON.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -159,9 +204,21 @@ namespace DA_tinhoc
         {
             try
             {
+                // Đọc dữ liệu từ file JSON
                 string json = File.ReadAllText(filePath);
-                DMSinhVien.DsSinhVien = JsonConvert.DeserializeObject<List<SinhVien>>(json);
+
+                // Chuyển đổi JSON thành danh sách sinh viên
+                var danhSach = JsonConvert.DeserializeObject<List<SinhVien>>(json);
+
+                // Nếu danh sách hợp lệ, gán vào `DMSinhVien.DsSinhVien`
+                if (danhSach != null)
+                {
+                    DMSinhVien.DsSinhVien = danhSach;
+                }
+
+                // Cập nhật DataGridView
                 HienThiDanhSachSinhVien(dgvQLSV, DMSinhVien.DsSinhVien);
+
                 MessageBox.Show("Đã tải danh sách sinh viên từ file JSON.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
@@ -209,6 +266,61 @@ namespace DA_tinhoc
             { 
                 Close();
             }
+        }
+        private void btnTimTheoMa_Click(object sender, EventArgs e)
+        {
+            int ma;
+            if (!int.TryParse(txtTimTheoMa.Text,out ma))
+            {
+                MessageBox.Show("Mã Nhập Vào Không Phải Là Số Nguyên", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtTimTheoMa.Clear();
+                return;
+            }
+            DanhMucSinhVien dstimkiem=new DanhMucSinhVien();
+            if (DMSinhVien.TimTheoMa(ma) != null) 
+            {
+                dstimkiem.Them(DMSinhVien.TimTheoMa(ma));
+                HienThiDanhSachSinhVien(dgvTimSinhVien, dstimkiem.DsSinhVien);
+            }
+            else
+            {
+                MessageBox.Show("không có học sinh cần tìm ", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private void CapNhatComboBoxLop()
+        {
+            cbxLop.Items.Clear(); // Xóa các lớp cũ
+
+            string khoa = cbxKhoa.SelectedItem?.ToString();
+            string khoas = cbxKhoas.SelectedItem?.ToString();
+
+            // Gọi phương thức CapNhatDanhSachLop trong DanhMucSinhVien
+            List<string> danhSachLop = DMSinhVien.CapNhatDanhSachLop(khoas, khoa);
+            
+            cbxLop.Enabled = true;
+            // Thêm danh sách lớp vào ComboBox cbxLop
+            cbxLop.Items.AddRange(danhSachLop.ToArray());
+        }
+
+        private void cbxKhoa_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CapNhatComboBoxLop();
+        }
+
+        private void cbxKhoas_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CapNhatComboBoxLop();
+        }
+
+        private void btnLocDS_Click(object sender, EventArgs e)
+        {
+            List<string> danhSachLop = DMSinhVien.DsSinhVien.Select(sv => sv.Lop).Distinct().ToList();
+            List<string> danhSachKhoa = DMSinhVien.DsSinhVien.Select(sv => sv.Khoa).Distinct().ToList();
+            List<string> danhSachKhoas = DMSinhVien.DsSinhVien.Select(sv => sv.Khoas).Distinct().ToList();
+            Hide(); 
+            FromHienThi frmhienthi= new FromHienThi(DMSinhVien, danhSachLop, danhSachKhoa, danhSachKhoas);
+            frmhienthi.ShowDialog();
+            Show();
         }
     }
 }
